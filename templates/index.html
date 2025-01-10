@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume JD Matcher</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/element-plus"></script>
+</head>
+<body>
+    <div id="app">
+        <el-container>
+            <el-header>
+                <h1>Resume JD Matcher</h1>
+            </el-header>
+            <el-main>
+                <el-row :gutter="20" justify="center">
+                    <el-col :span="12">
+                        <el-card>
+                            <template #header>
+                                <div class="card-header">
+                                    <span>Upload Resume & Job Description</span>
+                                </div>
+                            </template>
+                            <el-upload
+                                class="upload-demo"
+                                drag
+                                action="/upload"
+                                :on-success="handleSuccess"
+                                :on-error="handleError"
+                                accept=".pdf">
+                                <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+                                <div class="el-upload__text">
+                                    Drop file here or <em>click to upload</em>
+                                </div>
+                            </el-upload>
+                            <el-input
+                                v-model="jobDescription"
+                                type="textarea"
+                                :rows="6"
+                                placeholder="Paste job description here..."
+                                class="mt-20">
+                            </el-input>
+                            <el-button type="primary" @click="analyze" class="mt-20" :loading="loading">
+                                Analyze Match
+                            </el-button>
+                        </el-card>
+                    </el-col>
+                </el-row>
+            </el-main>
+        </el-container>
+    </div>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html> 

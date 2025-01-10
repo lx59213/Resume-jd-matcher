@@ -1,11 +1,12 @@
-from flask import Flask
+from flask import Flask, render_template
+import os
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates", static_folder="static")
 
 
 @app.route("/")
 def home():
-    return "Resume JD Matcher is running!"
+    return render_template("index.html")
 
 
 @app.route("/health")

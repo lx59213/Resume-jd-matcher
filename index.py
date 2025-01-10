@@ -1,12 +1,13 @@
-from app import create_app
+from flask import Flask
 
-# 创建应用实例
-app = create_app()
-
-# Vercel 需要这个入口
-app.debug = False
+app = Flask(__name__)
 
 
-# 处理 WSGI 请求
-def handler(event, context):
-    return app(event, context)
+@app.route("/")
+def home():
+    return "Resume JD Matcher is running!"
+
+
+@app.route("/health")
+def health():
+    return "OK"

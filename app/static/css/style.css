@@ -1,95 +1,99 @@
-.el-main {
-    padding: 20px;
-}
-
-.el-card {
-    height: 100%;
-}
-
-pre {
-    white-space: pre-wrap;
-    word-wrap: break-word;
+/* 全局样式 */
+body {
     margin: 0;
-    font-family: inherit;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-.el-scrollbar {
-    height: 100%;
-}
-
-/* 禁止选中文本 */
-.no-select {
-    user-select: none;
-    -webkit-user-select: none;
-}
-
-/* 头部内容容器 */
-.header-content {
-    position: relative;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-    height: 60px;
+/* 头部样式 */
+.el-header {
     background-color: #fff;
-    border-bottom: 1px solid #dcdfe6;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
 }
 
-/* 头部左侧 */
-.header-left {
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 100%;
     display: flex;
     align-items: center;
+    justify-content: space-between;
 }
 
-/* 标题样式 */
 .site-title {
+    font-size: 20px;
     font-weight: bold;
-    font-size: 18px;
     color: #303133;
-    white-space: nowrap;
 }
 
-/* 标语容器 */
 .slogan-container {
     display: flex;
     align-items: center;
-    margin-left: 20px;
     cursor: pointer;
-    padding: 8px;
-    border-radius: 4px;
-    transition: background-color 0.3s;
+    gap: 8px;
 }
 
-.slogan-container:hover {
-    background-color: #f5f7fa;
-}
-
-/* 折叠图标 */
 .collapse-icon {
-    font-size: 16px;
-    color: #909399;
     transition: transform 0.3s;
-    margin-right: 8px;
+    color: #909399;
 }
 
 .collapse-icon.is-active {
     transform: rotate(-90deg);
 }
 
-/* 标语文本 */
 .slogan-text {
     color: #606266;
     font-size: 14px;
-    transition: opacity 0.3s, transform 0.3s;
 }
 
-/* 标语文本动画 */
-.el-fade-in-linear-enter-active,
-.el-fade-in-linear-leave-active {
-    transition: opacity 0.2s linear;
+/* 主内容区域 */
+.el-main {
+    background-color: #f5f7fa;
+    min-height: calc(100vh - 60px);
+    padding: 20px;
 }
 
-.el-fade-in-linear-enter-from,
-.el-fade-in-linear-leave-to {
-    opacity: 0;
+.el-row {
+    margin-bottom: 20px;
+}
+
+/* 卡片样式 */
+.el-card {
+    margin-bottom: 20px;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 表单样式 */
+.el-form-item {
+    margin-bottom: 20px;
+}
+
+/* 上传区域样式 */
+.el-upload {
+    width: 100%;
+}
+
+.el-upload-dragger {
+    width: 100%;
+}
+
+/* 分析结果样式 */
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    padding: 15px;
+    margin: 0;
+    font-family: Monaco, Menlo, Consolas, "Courier New", monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #303133;
+    background-color: #f8f9fa;
+    border-radius: 4px;
 }

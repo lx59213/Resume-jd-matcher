@@ -16,3 +16,11 @@ def create_app(config_class=Config):
         return jsonify({"error": str(error)}), 500
 
     return app
+
+
+# 创建应用实例供 Vercel 使用
+app = create_app()
+
+# 确保导出 app 变量
+if __name__ == "__main__":
+    app.run()

@@ -1,80 +1,72 @@
-const { createApp, ref } = Vue;
-const { ElMessage } = ElementPlus;
+document.addEventListener("DOMContentLoaded", function () {
+  // 文件上传处理
+  const fileInput = document.getElementById("resume-upload");
+  const uploadButton = document.querySelector(".upload-button");
+  let files = [];
 
-// 导入所需的图标
-const { UploadFilled } = ElementPlusIconsVue;
+  fileInput.addEventListener("change", function (e) {
+    files = Array.from(e.target.files);
+    uploadButton.textContent =
+      files.length > 0 ? `已选择 ${files.length} 个文件` : "选择文件";
+  });
 
-const app = createApp({
-  setup() {
-    const jobDescription = ref("");
-    const loading = ref(false);
-    const uploadFile = ref(null);
+  // 标签切换
+  const tabs = document.querySelectorAll(".tab");
+  const tabContent = document.querySelector(".tab-content");
 
-    const handleSuccess = (response) => {
-      uploadFile.value = response.filename;
-      ElMessage({
-        message: "File uploaded successfully",
-        type: "success",
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", function () {
+      // 移除其他标签的激活状态
+      tabs.forEach((t) => t.classList.remove("active"));
+      // 激活当前标签
+      this.classList.add("active");
+      // TODO: 更新标签内容
+    });
+  });
+
+  // 分析按钮处理
+  const analyzeButton = document.querySelector(".analyze-button");
+  const textarea = document.querySelector("textarea");
+
+  analyzeButton.addEventListener("click", async function () {
+    if (files.length === 0) {
+      alert("请先上传简历文件");
+      return;
+    }
+
+    if (!textarea.value.trim()) {
+      alert("请输入职位描述");
+      return;
+    }
+
+    analyzeButton.disabled = true;
+    analyzeButton.textContent = "分析中...";
+
+    try {
+      // 创建 FormData 对象
+      const formData = new FormData();
+      files.forEach((file) => {
+        formData.append("files", file);
       });
-    };
+      formData.append("jobDescription", textarea.value);
 
-    const handleError = () => {
-      uploadFile.value = null;
-      ElMessage.error("Upload failed");
-    };
+      // 发送请求
+      const response = await fetch("/analyze", {
+        method: "POST",
+        body: formData,
+      });
 
-    const analyze = async () => {
-      if (!uploadFile.value) {
-        ElMessage.warning("Please upload a resume first");
-        return;
+      if (!response.ok) {
+        throw new Error("分析失败");
       }
 
-      if (!jobDescription.value) {
-        ElMessage.warning("Please enter a job description");
-        return;
-      }
-
-      loading.value = true;
-      try {
-        const response = await fetch("/analyze", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            filename: uploadFile.value,
-            jobDescription: jobDescription.value,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Analysis failed");
-        }
-
-        const result = await response.json();
-        ElMessage({
-          message: "Analysis complete",
-          type: "success",
-        });
-      } catch (error) {
-        ElMessage.error(error.message || "Analysis failed");
-      } finally {
-        loading.value = false;
-      }
-    };
-
-    return {
-      jobDescription,
-      loading,
-      handleSuccess,
-      handleError,
-      analyze,
-    };
-  },
+      const result = await response.json();
+      // TODO: 显示分析结果
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      analyzeButton.disabled = false;
+      analyzeButton.textContent = "开始匹配";
+    }
+  });
 });
-
-// 注册图标组件
-app.component("upload-filled", UploadFilled);
-
-app.use(ElementPlus);
-app.mount("#app");

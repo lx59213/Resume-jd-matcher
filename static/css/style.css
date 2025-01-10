@@ -3,66 +3,151 @@ body {
     padding: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     background-color: #f5f7fa;
-    min-height: 100vh;
 }
 
-.el-header {
-    background-color: #fff;
-    color: #333;
-    text-align: center;
-    line-height: 60px;
-    box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
     margin-bottom: 20px;
 }
 
-.el-main {
-    padding: 20px 40px;
+header h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
 }
 
-.mt-20 {
-    margin-top: 20px;
+.breadcrumb {
+    margin: 10px 0;
+    color: #666;
+    font-size: 14px;
 }
 
-.card-header {
+main {
     display: flex;
-    justify-content: space-between;
+    gap: 20px;
+}
+
+.left-panel {
+    flex: 0 0 400px;
+    background: #fff;
+    border-radius: 4px;
+    padding: 20px;
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,0.1);
+}
+
+.right-panel {
+    flex: 1;
+    background: #fff;
+    border-radius: 4px;
+    padding: 20px;
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,0.1);
+}
+
+h2 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.upload-section {
+    margin-bottom: 20px;
+}
+
+.file-upload {
+    display: flex;
     align-items: center;
+    gap: 10px;
 }
 
-.upload-card {
-    margin: 0 auto;
-    max-width: 800px;
+.upload-button {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: #409eff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
 }
 
-.el-upload {
-    width: 100%;
+.upload-button:hover {
+    background-color: #66b1ff;
 }
 
-.el-upload-dragger {
-    width: 100%;
-    height: 200px;
+input[type="file"] {
+    display: none;
 }
 
-.el-upload__tip {
+.file-hint {
     color: #909399;
     font-size: 12px;
-    margin-top: 8px;
 }
 
-.analyze-btn {
+.job-description {
+    margin-bottom: 20px;
+}
+
+textarea {
     width: 100%;
-    margin-top: 20px;
-    height: 40px;
-    font-size: 16px;
+    height: 150px;
+    padding: 10px;
+    border: 1px solid #dcdfe6;
+    border-radius: 4px;
+    resize: vertical;
+    font-family: inherit;
+    font-size: 14px;
 }
 
-.el-textarea__inner {
-    min-height: 150px !important;
+textarea:focus {
+    outline: none;
+    border-color: #409eff;
 }
 
-/* Icon styles */
-.el-icon--upload {
-    font-size: 48px;
-    color: #409EFF;
-    margin-bottom: 10px;
+.analyze-button {
+    width: 100%;
+    padding: 12px 0;
+    background-color: #409eff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.analyze-button:hover {
+    background-color: #66b1ff;
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 2px solid #e4e7ed;
+    margin-bottom: 20px;
+}
+
+.tab {
+    padding: 10px 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #303133;
+    font-size: 14px;
+    position: relative;
+}
+
+.tab.active {
+    color: #409eff;
+}
+
+.tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #409eff;
 } 

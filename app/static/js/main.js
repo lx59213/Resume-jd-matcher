@@ -1,99 +1,89 @@
 const { createApp, ref } = Vue;
-const { ElMessage } = ElementPlus;
 
-// 创建 Vue 应用
+// 创建应用实例
 const app = createApp({
   setup() {
-    // 获取标语
-    const appElement = document.getElementById("app");
-    const slogan = appElement.dataset.slogan;
-    const showSlogan = ref(true);
-
-    // 标签页状态
     const activeTab = ref("jobAnalysis");
-    const loading = ref(false);
     const jdText = ref("");
+    const loading = ref(false);
     const jobAnalysis = ref("");
     const matchAnalysis = ref("");
     const resumeContent = ref("");
-    const selectedFiles = ref([]);
+    const fileList = ref([]);
+    const showSlogan = ref(true);
+    const slogan = ref(
+      document.querySelector("#app").getAttribute("data-slogan")
+    );
 
-    // 切换标语显示
     const toggleSlogan = () => {
       showSlogan.value = !showSlogan.value;
     };
 
-    // 处理文件变化
-    const handleFileChange = (file, fileList) => {
-      selectedFiles.value = fileList;
+    const handleFileChange = (file) => {
+      fileList.value.push(file.raw);
     };
 
-    // 处理表单提交
     const handleSubmit = async () => {
-      if (selectedFiles.value.length === 0) {
-        ElMessage.warning("请先选择简历文件");
+      if (fileList.value.length === 0) {
+        ElementPlus.ElMessage.error("请选择简历文件");
         return;
       }
 
-      if (!jdText.value.trim()) {
-        ElMessage.warning("请输入职位描述");
+      if (!jdText.value) {
+        ElementPlus.ElMessage.error("请输入职位描述");
         return;
       }
 
       loading.value = true;
       const formData = new FormData();
-      selectedFiles.value.forEach((file) => {
-        formData.append("files", file.raw);
+      fileList.value.forEach((file) => {
+        formData.append("files[]", file);
       });
       formData.append("jd", jdText.value);
 
       try {
-        const response = await fetch("/analyze", {
+        const response = await fetch("/upload", {
           method: "POST",
           body: formData,
         });
 
-        if (!response.ok) {
-          throw new Error("分析失败");
+        const data = await response.json();
+        if (response.ok) {
+          jobAnalysis.value = data.job_analysis;
+          matchAnalysis.value = data.match_analysis;
+          resumeContent.value = data.resume;
+        } else {
+          ElementPlus.ElMessage.error(data.error || "处理失败，请重试");
         }
-
-        const result = await response.json();
-        jobAnalysis.value = result.jobAnalysis || "";
-        matchAnalysis.value = result.matchAnalysis || "";
-        resumeContent.value = result.resumeContent || "";
-
-        ElMessage.success("分析完成");
       } catch (error) {
         console.error("Error:", error);
-        ElMessage.error(error.message || "分析失败");
+        ElementPlus.ElMessage.error("发生错误：" + error.message);
       } finally {
         loading.value = false;
       }
     };
 
     return {
-      slogan,
-      showSlogan,
       activeTab,
-      loading,
       jdText,
+      loading,
       jobAnalysis,
       matchAnalysis,
       resumeContent,
-      toggleSlogan,
       handleFileChange,
       handleSubmit,
+      showSlogan,
+      slogan,
+      toggleSlogan,
     };
   },
 });
 
-// 注册必要的组件
+// 注册 Element Plus
 app.use(ElementPlus);
 
 // 注册图标组件
-for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
-  app.component(key, component);
-}
+app.component("el-icon-arrow-down", ElementPlusIconsVue.ArrowDown);
 
 // 挂载应用
 app.mount("#app");

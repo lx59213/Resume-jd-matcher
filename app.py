@@ -1,26 +1,21 @@
-from flask import Flask, jsonify
-from config import Config
+from flask import Flask
+import os
 
 
-def create_app(config_class=Config):
+def create_app():
     app = Flask(__name__)
-    app.config.from_object(config_class)
 
-    from app.routes import main
+    # 基本配置
+    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev")
+    app.config["ALLOWED_EXTENSIONS"] = {"pdf"}
 
-    app.register_blueprint(main)
+    # 注册蓝图
+    from index import main as main_blueprint
 
-    # 添加全局错误处理
-    @app.errorhandler(Exception)
-    def handle_error(error):
-        return jsonify({"error": str(error)}), 500
+    app.register_blueprint(main_blueprint)
 
     return app
 
 
-# 创建应用实例供 Vercel 使用
+# 创建应用实例
 app = create_app()
-
-# 确保导出 app 变量
-if __name__ == "__main__":
-    app.run()

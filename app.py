@@ -1,21 +1,18 @@
 from flask import Flask
-import os
+from config import Config
 
 
-def create_app():
+def create_app(config_class=Config):
     app = Flask(__name__)
-
-    # 基本配置
-    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev")
-    app.config["ALLOWED_EXTENSIONS"] = {"pdf"}
+    app.config.from_object(config_class)
 
     # 注册蓝图
-    from index import main as main_blueprint
+    from app.routes import main
 
-    app.register_blueprint(main_blueprint)
+    app.register_blueprint(main)
 
     return app
 
 
-# 创建应用实例
+# 创建应用实例供 Vercel 使用
 app = create_app()

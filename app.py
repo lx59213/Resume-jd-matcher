@@ -18,8 +18,6 @@ class Config:
     ALLOWED_EXTENSIONS = {"pdf"}
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
     OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
-    UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
-    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
 # 创建蓝图
@@ -100,7 +98,11 @@ def allowed_file(filename):
 
 # 创建应用
 def create_app():
-    app = Flask(__name__)
+    app = Flask(
+        __name__,
+        static_folder="app/static",  # 指定静态文件目录
+        template_folder="app/templates",  # 指定模板目录
+    )
     app.config.from_object(Config)
     app.register_blueprint(main)
     return app

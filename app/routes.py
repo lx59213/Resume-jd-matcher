@@ -1,11 +1,4 @@
-from flask import (
-    Blueprint,
-    render_template,
-    request,
-    jsonify,
-    current_app,
-    send_from_directory,
-)
+from flask import Blueprint, render_template, request, jsonify, current_app
 from werkzeug.utils import secure_filename
 import os
 from app.utils.pdf_parser import extract_text_from_pdf
@@ -20,11 +13,6 @@ main = Blueprint("main", __name__)
 def index():
     slogan = choice(SLOGANS)
     return render_template("index.html", slogan=slogan)
-
-
-@main.route("/favicon.ico")
-def favicon():
-    return "", 204  # 返回空响应，状态码204
 
 
 @main.route("/upload", methods=["POST"])

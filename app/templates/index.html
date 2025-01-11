@@ -1,70 +1,31 @@
 {% extends "base.html" %}
 
 {% block content %}
-<el-row :gutter="20">
-    <!-- 左侧上传区域 -->
-    <el-col :span="8">
-        <el-card>
-            <template #header>
-                <div class="card-header">
-                    <span>上传简历</span>
-                </div>
-            </template>
-            <el-form id="uploadForm" @submit.prevent="handleSubmit">
-                <el-form-item label="选择PDF简历文件（可多选）">
-                    <el-upload
-                        ref="upload"
-                        action="#"
-                        :auto-upload="false"
-                        :on-change="handleFileChange"
-                        accept=".pdf"
-                        multiple>
-                        <template #trigger>
-                            <el-button type="primary">选择文件</el-button>
-                        </template>
-                    </el-upload>
-                </el-form-item>
-                <el-form-item label="职位描述 (JD)">
-                    <el-input
-                        type="textarea"
-                        v-model="jdText"
-                        :rows="10"
-                        placeholder="请输入职位描述">
-                    </el-input>
-                </el-form-item>
-                <el-button type="primary" @click="handleSubmit" :loading="loading">
-                    开始匹配
-                </el-button>
-            </el-form>
-        </el-card>
-    </el-col>
-
-    <!-- 右侧结果区域 -->
-    <el-col :span="16">
-        <el-card>
-            <el-tabs v-model="activeTab">
-                <el-tab-pane label="职位分析" name="jobAnalysis">
-                    <el-scrollbar height="calc(100vh - 250px)">
-                        <pre v-html="jobAnalysis"></pre>
-                    </el-scrollbar>
-                </el-tab-pane>
-                <el-tab-pane label="匹配分析" name="matchAnalysis">
-                    <el-scrollbar height="calc(100vh - 250px)">
-                        <pre v-html="matchAnalysis"></pre>
-                    </el-scrollbar>
-                </el-tab-pane>
-                <el-tab-pane label="生成简历" name="resume">
-                    <el-scrollbar height="calc(100vh - 250px)">
-                        <el-input
-                            v-model="resumeContent"
-                            type="textarea"
-                            :rows="20"
-                            resize="none">
-                        </el-input>
-                    </el-scrollbar>
-                </el-tab-pane>
-            </el-tabs>
-        </el-card>
-    </el-col>
-</el-row>
+<div class="container">
+    <div class="left-panel">
+        <h2>上传简历</h2>
+        <div class="upload-section">
+            <div class="file-upload">
+                <label for="resume-upload" class="upload-button">选择文件</label>
+                <input type="file" id="resume-upload" accept=".pdf" multiple>
+                <span class="file-hint">(可多选)</span>
+            </div>
+        </div>
+        <div class="job-description">
+            <h2>职位描述 (JD)</h2>
+            <textarea placeholder="请输入职位描述"></textarea>
+        </div>
+        <button class="analyze-button">开始匹配</button>
+    </div>
+    <div class="right-panel">
+        <div class="tabs">
+            <button class="tab active">职位分析</button>
+            <button class="tab">匹配分析</button>
+            <button class="tab">生成简历</button>
+        </div>
+        <div class="tab-content">
+            <!-- 分析结果将在这里显示 -->
+        </div>
+    </div>
+</div>
 {% endblock %}

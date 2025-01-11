@@ -11,6 +11,9 @@ from werkzeug.utils import secure_filename
 import os
 from random import choice
 
+# 判断是否在 Vercel 环境
+IS_VERCEL = os.environ.get("VERCEL") == "1"
+
 
 # 配置类
 class Config:
@@ -18,6 +21,12 @@ class Config:
     ALLOWED_EXTENSIONS = {"pdf"}
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
     OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+
+    if not IS_VERCEL:  # 只在本地环境创建上传目录
+        UPLOAD_FOLDER = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "uploads"
+        )
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
 # 创建蓝图
@@ -60,8 +69,15 @@ def upload_files():
 
             if file and allowed_file(file.filename):
                 try:
-                    # 这里暂时返回模拟数据
-                    resume_texts.append("简历内容示例")
+                    if IS_VERCEL:
+                        # Vercel 环境使用模拟数据
+                        resume_texts.append("简历内容示例")
+                    else:
+                        # 本地环境使用实际功能
+                        from app.utils.pdf_parser import extract_text_from_pdf
+
+                        text = extract_text_from_pdf(file)
+                        resume_texts.append(text)
                 except Exception as e:
                     return (
                         jsonify(
@@ -74,12 +90,19 @@ def upload_files():
             return jsonify({"error": "没有有效的简历文件"}), 400
 
         try:
-            # 这里暂时返回模拟数据
-            result = {
-                "job_analysis": "职位分析示例",
-                "match_analysis": "匹配分析示例",
-                "resume": "生成的简历示例",
-            }
+            if IS_VERCEL:
+                # Vercel 环境使用模拟数据
+                result = {
+                    "job_analysis": "职位分析示例 (Vercel 演示版本)",
+                    "match_analysis": "匹配分析示例 (Vercel 演示版本)",
+                    "resume": "生成的简历示例 (Vercel 演示版本)",
+                }
+            else:
+                # 本地环境使用实际功能
+                from app.utils.ai_matcher import generate_matched_resume
+
+                result = generate_matched_resume(resume_texts, jd_text)
+
             return jsonify(result)
         except Exception as e:
             return jsonify({"error": f"生成匹配简历时出错: {str(e)}"}), 500
@@ -98,11 +121,15 @@ def allowed_file(filename):
 
 # 创建应用
 def create_app():
-    app = Flask(
-        __name__,
-        static_folder="app/static",  # 指定静态文件目录
-        template_folder="app/templates",  # 指定模板目录
-    )
+    if IS_VERCEL:
+        # Vercel 环境
+        app = Flask(
+            __name__, static_folder="app/static", template_folder="app/templates"
+        )
+    else:
+        # 本地环境
+        app = Flask(__name__)
+
     app.config.from_object(Config)
     app.register_blueprint(main)
     return app

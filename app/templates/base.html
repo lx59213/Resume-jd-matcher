@@ -1,32 +1,40 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>简历JD匹配器</title>
-    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div id="app" data-slogan="{{ slogan }}">
-        <div class="header-content">
-            <div class="header-left">
-                <h1 class="site-title">简历JD匹配器</h1>
-                <div class="slogan-container" @click="toggleSlogan">
-                    <i class="el-icon-arrow-down collapse-icon" :class="{ 'is-active': !showSlogan }"></i>
-                    <transition name="el-fade-in-linear">
-                        <span v-if="showSlogan" class="slogan-text" v-text="slogan"></span>
-                    </transition>
+        <el-container>
+            <el-header>
+                <div class="header-content">
+                    <div class="header-left">
+                        <span class="site-title">简历JD匹配器</span>
+                    </div>
+                    <div class="slogan-container" @click="toggleSlogan">
+                        <el-icon class="collapse-icon" :class="{ 'is-active': showSlogan }">
+                            <el-icon-arrow-down />
+                        </el-icon>
+                        <transition name="el-fade-in-linear">
+                            <span v-show="showSlogan" class="slogan-text">{{ slogan }}</span>
+                        </transition>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="main-content">
-            {% block content %}{% endblock %}
-        </div>
+            </el-header>
+            <el-main>
+                {% block content %}{% endblock %}
+            </el-main>
+        </el-container>
     </div>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <script src="https://unpkg.com/element-plus"></script>
-    <script src="https://unpkg.com/@element-plus/icons-vue"></script>
+
+    <script src="//unpkg.com/vue@3"></script>
+    <script src="//unpkg.com/element-plus"></script>
+    <script src="//unpkg.com/@element-plus/icons-vue"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

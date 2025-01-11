@@ -1,101 +1,89 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const app = Vue.createApp({
-    data() {
-      return {
-        showSlogan: true,
-        slogan: document.getElementById("app").dataset.slogan,
-        activeTab: "jobAnalysis",
-        files: [],
-        loading: false,
-        jobAnalysis: "",
-        matchAnalysis: "",
-        resumeContent: "",
-      };
-    },
-    methods: {
-      toggleSlogan() {
-        this.showSlogan = !this.showSlogan;
-      },
-      async handleSubmit() {
-        const fileInput = document.getElementById("resume-upload");
-        const textarea = document.querySelector("textarea");
+const { createApp, ref } = Vue;
 
-        if (fileInput.files.length === 0) {
-          ElementPlus.ElMessage.warning("请选择简历文件");
-          return;
+// 创建应用实例
+const app = createApp({
+  setup() {
+    const activeTab = ref("jobAnalysis");
+    const jdText = ref("");
+    const loading = ref(false);
+    const jobAnalysis = ref("");
+    const matchAnalysis = ref("");
+    const resumeContent = ref("");
+    const fileList = ref([]);
+    const showSlogan = ref(true);
+    const slogan = ref(
+      document.querySelector("#app").getAttribute("data-slogan")
+    );
+
+    const toggleSlogan = () => {
+      showSlogan.value = !showSlogan.value;
+    };
+
+    const handleFileChange = (file) => {
+      fileList.value.push(file.raw);
+    };
+
+    const handleSubmit = async () => {
+      if (fileList.value.length === 0) {
+        ElementPlus.ElMessage.error("请选择简历文件");
+        return;
+      }
+
+      if (!jdText.value) {
+        ElementPlus.ElMessage.error("请输入职位描述");
+        return;
+      }
+
+      loading.value = true;
+      const formData = new FormData();
+      fileList.value.forEach((file) => {
+        formData.append("files[]", file);
+      });
+      formData.append("jd", jdText.value);
+
+      try {
+        const response = await fetch("/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          jobAnalysis.value = data.job_analysis;
+          matchAnalysis.value = data.match_analysis;
+          resumeContent.value = data.resume;
+        } else {
+          ElementPlus.ElMessage.error(data.error || "处理失败，请重试");
         }
+      } catch (error) {
+        console.error("Error:", error);
+        ElementPlus.ElMessage.error("发生错误：" + error.message);
+      } finally {
+        loading.value = false;
+      }
+    };
 
-        if (!textarea.value.trim()) {
-          ElementPlus.ElMessage.warning("请输入职位描述");
-          return;
-        }
-
-        this.loading = true;
-        const formData = new FormData();
-
-        for (const file of fileInput.files) {
-          formData.append("files[]", file);
-        }
-        formData.append("jd", textarea.value);
-
-        try {
-          const response = await fetch("/upload", {
-            method: "POST",
-            body: formData,
-          });
-
-          if (!response.ok) {
-            throw new Error("上传失败");
-          }
-
-          const result = await response.json();
-          this.jobAnalysis = result.job_analysis;
-          this.matchAnalysis = result.match_analysis;
-          this.resumeContent = result.resume;
-
-          ElementPlus.ElMessage.success("分析完成");
-        } catch (error) {
-          ElementPlus.ElMessage.error(error.message);
-        } finally {
-          this.loading = false;
-        }
-      },
-    },
-  });
-
-  // 注册必要的组件
-  app.use(ElementPlus);
-
-  // 挂载应用
-  app.mount("#app");
-
-  // 标签切换功能
-  const tabs = document.querySelectorAll(".tab");
-  const tabContent = document.querySelector(".tab-content");
-
-  tabs.forEach((tab) => {
-    tab.addEventListener("click", function () {
-      tabs.forEach((t) => t.classList.remove("active"));
-      this.classList.add("active");
-    });
-  });
-
-  // 文件上传按钮更新文本
-  const fileInput = document.getElementById("resume-upload");
-  const uploadButton = document.querySelector(".upload-button");
-
-  fileInput.addEventListener("change", function () {
-    const fileCount = this.files.length;
-    if (fileCount > 0) {
-      uploadButton.textContent = `已选择 ${fileCount} 个文件`;
-    } else {
-      uploadButton.textContent = "选择文件";
-    }
-  });
-
-  // 分析按钮点击事件
-  const analyzeButton = document.querySelector(".analyze-button");
-  analyzeButton.addEventListener("click", function () {
-    app._instance.proxy.handleSubmit();
-  });
+    return {
+      activeTab,
+      jdText,
+      loading,
+      jobAnalysis,
+      matchAnalysis,
+      resumeContent,
+      handleFileChange,
+      handleSubmit,
+      showSlogan,
+      slogan,
+      toggleSlogan,
+    };
+  },
 });
+
+// 注册 Element Plus
+app.use(ElementPlus);
+
+// 注册图标组件
+app.component("el-icon-arrow-down", ElementPlusIconsVue.ArrowDown);
+
+// 挂载应用
+app.mount("#app");

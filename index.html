@@ -52,7 +52,7 @@
         <div class="container">
             <div class="header">
                 <h1>简历JD匹配器</h1>
-                <p>一个帮助求职者快速匹配职位的工具</p>
+                <p id="slogan">{{ randomSlogan }}</p>
             </div>
             <div class="main-content">
                 <div class="upload-section">
@@ -113,15 +113,13 @@
     <!-- Element Icons -->
     <script src="//unpkg.com/@element-plus/icons-vue"></script>
     <script>
-        const { createApp, ref } = Vue;
+        const { createApp, ref, onMounted } = Vue;
         const app = createApp({
             setup() {
                 const jdContent = ref('');
                 const activeTab = ref('position');
                 const matchResult = ref(null);
                 const files = ref([]);
-<<<<<<< Updated upstream
-=======
                 const randomSlogan = ref('一个帮助求职者快速匹配职位的工具');
 
                 const slogans = [
@@ -154,7 +152,6 @@
                     // 每30秒更新一次 slogan
                     setInterval(updateSlogan, 30000);
                 });
->>>>>>> Stashed changes
 
                 const handleFileChange = (file) => {
                     files.value.push(file);
@@ -218,6 +215,8 @@
                     jdContent,
                     activeTab,
                     matchResult,
+                    files,
+                    randomSlogan,
                     handleFileChange,
                     startMatching
                 };

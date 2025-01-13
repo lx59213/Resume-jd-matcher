@@ -1,26 +1,60 @@
 @echo off
-echo Setting up Python PATH...
+setlocal enabledelayedexpansion
 
-set PYTHON_PATH=E:\PYTHON
+:: 保持窗口打开并显示标题
+title Python Setup
 
-:: 检查 Python 是否存在
-if not exist "%PYTHON_PATH%\python.exe" (
-    echo Error: Python not found at %PYTHON_PATH%
+:: 记录日志
+echo Setup started at %TIME% > python_setup.log
+
+:: 尝试查找 Python
+for %%P in (
+    "C:\Python313\python.exe"
+    "C:\Users\hasee\AppData\Local\Programs\Python\Python313\python.exe"
+    "C:\不要放这里\Python313\python.exe"
+) do (
+    if exist %%P (
+        echo Found Python at %%P >> python_setup.log
+        set "PYTHON_EXE=%%P"
+        for %%I in ("%%~dpP.") do set "PYTHON_PATH=%%~fI"
+        goto :found_python
+    )
+)
+
+:python_not_found
+echo Python not found in common locations >> python_setup.log
+echo Python installation not found in expected locations.
+echo Please check python_setup.log for details.
+pause
+exit /b 1
+
+:found_python
+echo Using Python at: %PYTHON_EXE% >> python_setup.log
+
+:: 验证 Python
+"%PYTHON_EXE%" -V >> python_setup.log 2>&1
+if errorlevel 1 (
+    echo Failed to run Python >> python_setup.log
+    echo Failed to run Python. Check python_setup.log for details.
     pause
     exit /b 1
 )
 
-:: 添加到系统环境变量 PATH
-echo Adding Python to System PATH...
-setx /M PATH "%PYTHON_PATH%;%PYTHON_PATH%\Scripts;%PATH%"
+:: 设置环境变量
+set "PATH=%PYTHON_PATH%;%PYTHON_PATH%\Scripts;%PATH%"
+echo PATH updated >> python_setup.log
 
-:: 立即更新当前会话的 PATH
-set PATH=%PYTHON_PATH%;%PYTHON_PATH%\Scripts;%PATH%
+:: 显示成功信息
+echo Python configured successfully at %PYTHON_PATH%
+echo Setup completed successfully >> python_setup.log
 
-:: 验证 Python 安装
-echo Testing Python installation...
-python --version
+:: 导出变量
+endlocal & (
+    set "PATH=%PATH%"
+    set "PYTHON_PATH=%PYTHON_PATH%"
+    set "PYTHON_EXE=%PYTHON_EXE%"
+)
 
-echo Setup complete!
-echo Please restart your terminal to use Python.
-pause 
+:: 确保看到结果
+echo Setup complete. Press any key to continue...
+pause > nul 

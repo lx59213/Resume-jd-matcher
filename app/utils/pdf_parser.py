@@ -1,4 +1,4 @@
-import PyPDF2
+import pdfplumber
 import io
 import re
 
@@ -14,18 +14,14 @@ def extract_text_from_pdf(pdf_file):
         str: 提取的文本内容
     """
     try:
-        # 如果输入是文件路径
-        if isinstance(pdf_file, str):
-            pdf_reader = PyPDF2.PdfReader(open(pdf_file, "rb"))
-        # 如果输入是文件对象
+        if isinstance(pdf_file, (str, bytes, io.IOBase)):
+            with pdfplumber.open(pdf_file) as pdf:
+                text = ""
+                for page in pdf.pages:
+                    text += page.extract_text() or ""
         else:
-            pdf_reader = PyPDF2.PdfReader(pdf_file)
-
-        text = ""
-        # 遍历所有页面并提取文本
-        for page in pdf_reader.pages:
-            text += page.extract_text() + "\n"
-
+            raise ValueError("不支持的文件类型")
+        
         # 智能清理文本
         text = clean_text(text)
 
